@@ -2,7 +2,7 @@
 library(dplyr)
 library(glmnet)
 library(ggplot2)
-df <- read.csv("val.csv",na.strings=c("NA","", " "))
+df <- read.csv("data/val.csv",na.strings=c("NA","", " "))
 mpd_dates <- df %>% select(matches("ADATE_|RAMNT_|RDATE_|RFA_|DOB|ZIP"))
 df_nod <- df[,!(colnames(df) %in% colnames(mpd_dates))]
 na_nod <- sapply(df_nod, function(x) sum(is.na(x)))
@@ -26,7 +26,7 @@ test3 <- df_g[-sampo,]
 #check which variables have fewer or un adjusted levels
 train3_factors <- train3[,sapply(train3, is.factor)]
 #remove "RAMNT_3"  "ADATE_2"  "X" and "AD2" (mail or not mail is all mail)
-x_3 <- model.matrix(~.,train3[,!(colnames(train3) %in% c("RAMNT_3","ADATE_2","X","AD2",colnames(train3_factors)))])
+x_3 <- model.matrix(RA3~.,train3[,!(colnames(train3) %in% c("RAMNT_3","ADATE_2","X","AD2",colnames(train3_factors)[-12]))])
 y_3 <- train3$RA3
 fit_lgs <- glmnet(x=x_3,y=y_3,family = "binomial")
 plot(fit_lgs, xvar = "dev", label = TRUE)
